@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AlDía</title>
+<meta name="theme-color" content="#16212E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AlDía">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Barlow+Condensed:ital,wght@1,700;1,800&family=Cormorant+Garamond:wght@600;700&family=Orbitron:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EDF0F4;--surface:#FFFFFF;--ink:#16212E;--muted:#5D6B7B;--line:#D5DCE4;--chip:#E4E9EF;
+  --paid:#0E7A63;--paid-soft:#DDF1EA;--pend:#A85C08;--pend-soft:#FBEBD6;--inc:#2B54C8;--inc-soft:#E1E8FB;--danger:#B4232F;
+  --foot:#16212E;--foot-ink:#F2F5F8;--foot-muted:#A9B6C4;
+  --field:var(--bg);--btn:var(--ink);--btn-ink:var(--bg);--top-bg:var(--bg);--lock-bg:var(--bg);--on-bg:var(--ink);--on-bg-muted:var(--muted);--tabs-bg:var(--chip);--tabs-ink:var(--muted);--head-font:inherit;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F151C;--surface:#18212B;--ink:#E7EDF3;--muted:#93A2B3;--line:#2A3642;--chip:#22303D;
+  --paid:#3CC9A3;--paid-soft:#123B32;--pend:#F0A24A;--pend-soft:#3A2A14;--inc:#8AA8FF;--inc-soft:#1B2645;--danger:#FF7A85;
+  --foot:#E7EDF3;--foot-ink:#16212E;--foot-muted:#4D5B6B;
+}}
+:root[data-theme="dark"]{
+  --bg:#0F151C;--surface:#18212B;--ink:#E7EDF3;--muted:#93A2B3;--line:#2A3642;--chip:#22303D;
+  --paid:#3CC9A3;--paid-soft:#123B32;--pend:#F0A24A;--pend-soft:#3A2A14;--inc:#8AA8FF;--inc-soft:#1B2645;--danger:#FF7A85;
+  --foot:#E7EDF3;--foot-ink:#16212E;--foot-muted:#4D5B6B;
+}
+*,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--inc);outline-offset:2px}
+.app{max-width:560px;margin:0 auto;padding:12px 16px 210px}
+.num{font-variant-numeric:tabular-nums}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--top-bg);padding:6px 0 10px}
+.monthnav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.monthnav h1{color:var(--on-bg);font-family:var(--head-font);margin:0;font-size:1.75rem;font-weight:800;letter-spacing:-.02em;text-align:center;flex:1}
+.navbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:1.4rem;line-height:1;display:grid;place-items:center}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);background:var(--tabs-bg);border-radius:12px;padding:4px;margin-top:10px}
+.tabs button{border:0;background:transparent;padding:9px 4px;border-radius:9px;font-weight:600;color:var(--tabs-ink)}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(22,33,46,.12)}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+.card h2{margin:0 0 12px;font-size:1.05rem;font-weight:700}
+label{display:block;font-size:.85rem;font-weight:600;color:var(--muted);margin-top:12px}
+input[type=text],input[type=number],input[type=date],input[type=month]{display:block;width:100%;margin-top:5px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink);font-size:1rem;min-height:46px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:1px solid var(--line);background:var(--chip);padding:8px 12px;border-radius:999px;font-size:.92rem;font-weight:500}
+.chip.on{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
+.chip.add{background:transparent;border-style:dashed;color:var(--muted)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:5px}
+.seg button{border:1px solid var(--line);background:var(--chip);border-radius:10px;padding:10px;font-weight:600}
+.seg button.on{background:var(--inc);border-color:var(--inc);color:#fff}
+.actions{display:flex;gap:8px;margin-top:16px}
+.primary{flex:1;border:0;border-radius:12px;padding:13px;background:var(--btn);color:var(--btn-ink);font-weight:700;font-size:1rem}
+.ghost{border:1px solid var(--line);border-radius:12px;padding:13px 16px;background:transparent;font-weight:600}
+.inline{display:flex;gap:8px;margin-top:10px}
+.inline input{margin-top:0}
+.inline button{flex:none;border:0;border-radius:10px;padding:0 14px;background:var(--btn);color:var(--btn-ink);font-weight:700}
+
+.listhead{display:flex;justify-content:space-between;align-items:baseline;margin:22px 4px 8px}
+.empty{color:var(--muted)}
+.listhead h3{color:var(--on-bg);margin:0;font-size:1rem;font-weight:700}
+.listhead span{font-size:.9rem;color:var(--on-bg-muted)}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.item{border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.itemrow{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.pay{flex:none;width:40px;height:40px;border-radius:50%;border:2px solid var(--pend);background:var(--pend-soft);display:grid;place-items:center;padding:0}
+.pay svg{width:20px;height:20px;opacity:0}
+.item.paid .pay{border-color:var(--paid);background:var(--paid)}
+.item.paid .pay svg{opacity:1;stroke:var(--surface)}
+.pay:active{transform:scale(.92)}
+.info{flex:1;min-width:0;border:0;background:transparent;text-align:left;padding:0}
+.info strong{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info small{display:block;color:var(--muted);font-size:.84rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.amt{font-weight:700;font-size:1.02rem;white-space:nowrap}
+.item.paid .amt{color:var(--paid)}
+.item.paid .info strong{color:var(--muted)}
+.more{display:flex;gap:8px;padding:0 14px 12px 66px}
+.more button{border:1px solid var(--line);background:transparent;border-radius:9px;padding:7px 12px;font-size:.9rem;font-weight:600}
+.more .del{color:var(--danger)}
+.more .del.sure{background:var(--danger);color:#fff;border-color:var(--danger)}
+.badge{display:inline-block;font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--inc-soft);color:var(--inc);margin-left:6px;vertical-align:1px}
+.badge.ev{background:var(--chip);color:var(--muted)}
+.empty{padding:22px 16px;color:var(--muted);text-align:center}
+.copy{background:var(--inc-soft);border-color:transparent}
+.copy p{margin:0 0 12px;color:var(--ink)}
+.copy .primary{background:var(--inc);color:#fff}
+
+.hist{display:flex;align-items:center;gap:12px;padding:14px;border:0;border-top:1px solid var(--line);background:transparent;width:100%;text-align:left}
+.hist:first-child{border-top:0}
+.hist .m{flex:1;font-weight:600}
+.hist .m small{display:block;font-weight:400;color:var(--muted);font-size:.84rem}
+.hist .v{text-align:right;font-weight:700;color:var(--paid)}
+.hist .v small{display:block;font-weight:500;font-size:.8rem;color:var(--muted)}
+.yearsum{display:flex;justify-content:space-between;align-items:baseline}
+.yearsum b{font-size:1.4rem}
+
+.sum{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--foot);color:var(--foot-ink);padding:14px 20px calc(16px + env(safe-area-inset-bottom,0px));border-radius:22px 22px 0 0}
+.sum .in{max-width:528px;margin:0 auto}
+.sum .lab{font-size:.88rem;color:var(--foot-muted);font-weight:500}
+.sum .big{font-size:2.3rem;font-weight:800;letter-spacing:-.025em;line-height:1.1}
+.bar{height:6px;border-radius:6px;background:color-mix(in srgb,var(--foot-muted) 35%,transparent);margin:10px 0 12px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--paid);border-radius:6px;transition:width .4s ease}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.trio div{font-size:.8rem;color:var(--foot-muted)}
+.trio b{display:block;font-size:1rem;color:var(--foot-ink);font-weight:700}
+.trio .neg b{color:#FF8E8E}
+
+#toast{position:fixed;left:50%;bottom:190px;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;font-size:.92rem;opacity:0;pointer-events:none;transition:.25s;z-index:20;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.note{font-size:.82rem;color:var(--on-bg-muted);text-align:center;margin-top:18px}
+.loading{padding:60px 0;text-align:center;color:var(--muted)}
+.tabs .cnt{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:var(--pend);color:#fff;font-size:.72rem;font-weight:700;vertical-align:1px}
+.help{margin:0 0 4px;color:var(--muted);font-size:.92rem}
+.help.small{font-size:.82rem;margin-top:6px}
+label.check{display:flex;align-items:center;gap:10px;color:var(--ink);font-size:.95rem;font-weight:500;margin-top:14px}
+label.check input{width:20px;height:20px;accent-color:var(--inc)}
+.warn{background:var(--pend-soft);color:var(--ink);border-radius:12px;padding:12px 14px;font-size:.88rem;margin-top:14px}
+.status{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:.9rem;color:var(--muted)}
+.status i{width:9px;height:9px;border-radius:50%;background:var(--paid);flex:none}
+.wrap{flex-wrap:wrap}
+.wrap .ghost{flex:1}
+.msg{border-radius:12px;padding:12px 14px;margin-top:14px;font-size:.92rem;background:var(--surface);border:1px solid var(--line)}
+.msg.err{border-color:var(--danger);color:var(--danger)}
+.msg.ok{border-color:var(--paid);color:var(--paid)}
+.msg button{display:block;margin-top:8px;border:1px solid currentColor;background:transparent;color:inherit;border-radius:9px;padding:7px 12px;font-weight:600}
+.prop{padding:14px;border-top:1px solid var(--line)}
+.prop:first-child{border-top:0}
+.ptop{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.ptop strong{font-weight:600}
+.prop small{display:block;color:var(--muted);font-size:.84rem;margin-top:2px}
+.prop select{display:block;width:100%;margin-top:5px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink);font:inherit;min-height:44px}
+.match{margin:10px 0 0;font-size:.88rem;color:var(--ink)}
+.prop .actions{margin-top:12px}
+.prop .primary{padding:11px;background:var(--paid);color:#fff}
+.prop .ghost{padding:11px 14px}
+.locked .app,.locked .sum,.locked #toast{display:none}
+.lock{position:fixed;inset:0;z-index:50;background:var(--lock-bg);display:flex;align-items:center;justify-content:center;padding:calc(20px + env(safe-area-inset-top,0px)) 20px calc(20px + env(safe-area-inset-bottom,0px))}
+.lock[hidden]{display:none}
+.lockin{width:100%;max-width:300px;text-align:center}
+.brand{color:var(--on-bg);font-family:var(--head-font);font-size:2.6rem;font-weight:800;letter-spacing:-.03em}
+#lockmsg{margin:6px 0 22px;color:var(--on-bg-muted);min-height:1.45em}
+#lockmsg.err{color:var(--danger)}
+.dots{display:flex;justify-content:center;gap:12px;height:16px;margin-bottom:28px}
+.dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--on-bg)}
+.dots i.f{background:var(--on-bg)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.pad button{height:64px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:1.5rem;font-weight:600;aspect-ratio:1;justify-self:center;width:64px}
+.pad button.txt{font-size:.9rem;border-color:transparent;background:transparent;color:var(--muted)}
+.pad button.ok{background:var(--btn);color:var(--btn-ink);border-color:var(--btn);font-size:1rem}
+.pad button:disabled{opacity:.35}
+.brandbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.brandbar b{color:var(--on-bg);font-family:var(--head-font);font-size:1.05rem;font-weight:800;letter-spacing:-.01em}
+.brandbar .bb{display:flex;gap:6px}
+.brandbar button{color:var(--ink);border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:.85rem;font-weight:600}
+.linkbtn{border:0;background:transparent;color:var(--on-bg-muted);text-decoration:underline;font-size:.82rem;display:block;margin:8px auto 0}
+
+/* ---------- Estilos de fondo ---------- */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none}
+:root[data-skin][data-skin="deportivo"]{
+  --bg:#145A36;--surface:#FFFFFF;--ink:#10261A;--muted:#55685C;--line:#DCE5DF;--chip:#EAF1EC;--field:#F3F7F4;
+  --btn:#F2581C;--btn-ink:#FFFFFF;--paid:#178547;--paid-soft:#DDF3E5;--pend:#D9600F;--pend-soft:#FFE8DA;--inc:#1F5FD1;--inc-soft:#E2EBFC;--danger:#C62828;
+  --on-bg:#FFFFFF;--on-bg-muted:rgba(255,255,255,.85);--top-bg:rgba(18,84,50,.86);--lock-bg:transparent;--tabs-bg:rgba(0,0,0,.28);--tabs-ink:rgba(255,255,255,.88);
+  --foot:#0B2416;--foot-ink:#FFFFFF;--foot-muted:#A3C9B2;--head-font:"Barlow Condensed","Arial Narrow",sans-serif;
+}
+:root[data-skin][data-skin="deportivo"] body::before{background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 800' preserveAspectRatio='xMidYMid slice'%3E%3Cg fill='none' stroke='white' stroke-opacity='.32' stroke-width='3'%3E%3Crect x='20' y='20' width='360' height='760'/%3E%3Cline x1='20' y1='400' x2='380' y2='400'/%3E%3Ccircle cx='200' cy='400' r='62'/%3E%3Crect x='100' y='20' width='200' height='110'/%3E%3Crect x='150' y='20' width='100' height='42'/%3E%3Crect x='100' y='670' width='200' height='110'/%3E%3Crect x='150' y='738' width='100' height='42'/%3E%3Cpath d='M140 130a62 62 0 0 0 120 0M140 670a62 62 0 0 1 120 0'/%3E%3C/g%3E%3Ccircle cx='200' cy='400' r='4' fill='white' fill-opacity='.4'/%3E%3C/svg%3E") center/cover no-repeat,
+  repeating-linear-gradient(180deg,#1C7444 0 70px,#196A3E 70px 140px)}
+:root[data-skin="deportivo"] .monthnav h1,:root[data-skin="deportivo"] .brand{font-style:italic;font-size:2.1rem;letter-spacing:0}
+:root[data-skin="deportivo"] .brand{font-size:3rem}
+:root[data-skin="deportivo"] .brandbar b{font-style:italic;font-size:1.3rem}
+
+:root[data-skin][data-skin="ejecutivo"]{
+  --bg:#14213D;--surface:#FBF8F1;--ink:#1B2333;--muted:#6A6555;--line:#E3DCCB;--chip:#F1EBDD;--field:#FFFDF8;
+  --btn:#1B2A4A;--btn-ink:#F1DFB4;--paid:#2E6B4F;--paid-soft:#E2EEE6;--pend:#9C6B1E;--pend-soft:#F5E9D2;--inc:#2B4C8C;--inc-soft:#E3E9F5;--danger:#A3272F;
+  --on-bg:#F1DFB4;--on-bg-muted:rgba(241,223,180,.78);--top-bg:rgba(20,33,61,.88);--lock-bg:transparent;--tabs-bg:rgba(0,0,0,.28);--tabs-ink:rgba(241,223,180,.85);
+  --foot:#0D1628;--foot-ink:#F1DFB4;--foot-muted:#A99C7C;--head-font:"Cormorant Garamond",Georgia,serif;
+}
+:root[data-skin][data-skin="ejecutivo"] body::before{background:
+  repeating-linear-gradient(90deg,transparent 0 21px,rgba(241,223,180,.07) 21px 22px),
+  radial-gradient(ellipse at 50% 0%,#22355E 0%,#14213D 55%,#0C1527 100%)}
+:root[data-skin="ejecutivo"] .monthnav h1{font-size:2.1rem;font-weight:700;letter-spacing:0}
+:root[data-skin="ejecutivo"] .brand{font-size:3.2rem;font-weight:700;letter-spacing:.01em}
+:root[data-skin="ejecutivo"] .brandbar b{font-size:1.4rem;font-weight:700}
+:root[data-skin="ejecutivo"] .card,:root[data-skin="ejecutivo"] .list{border-color:#D8C9A3}
+:root[data-skin="ejecutivo"] .sum{border-top:2px solid #B08D57}
+
+:root[data-skin][data-skin="gamer"]{
+  --bg:#0B0718;--surface:#161029;--ink:#EEEAFF;--muted:#A79FCB;--line:#30265A;--chip:#221A40;--field:#0E0A1E;
+  --btn:#00E5FF;--btn-ink:#0B0718;--paid:#39FF88;--paid-soft:#123826;--pend:#FFB020;--pend-soft:#3A2A0A;--inc:#5AC8FF;--inc-soft:#132A40;--danger:#FF5C7A;
+  --on-bg:#FFFFFF;--on-bg-muted:#C9BFFF;--top-bg:rgba(11,7,24,.82);--lock-bg:transparent;--tabs-bg:rgba(255,255,255,.08);--tabs-ink:#C9BFFF;
+  --foot:#120A2A;--foot-ink:#FFFFFF;--foot-muted:#A79FCB;--head-font:"Orbitron","Trebuchet MS",sans-serif;
+}
+:root[data-skin][data-skin="gamer"] body::before{background:
+  radial-gradient(1.5px 1.5px at 12% 18%,#fff8,transparent),radial-gradient(1.5px 1.5px at 72% 9%,#fff7,transparent),radial-gradient(1px 1px at 40% 30%,#fff6,transparent),radial-gradient(1.5px 1.5px at 88% 34%,#fff6,transparent),radial-gradient(1px 1px at 25% 46%,#fff5,transparent),
+  radial-gradient(ellipse at 50% 62%,rgba(255,46,196,.35) 0%,transparent 45%),
+  linear-gradient(180deg,#0B0718 0%,#1C0B45 58%,#0B0718 100%)}
+:root[data-skin="gamer"] body::after{content:"";position:fixed;left:-50%;right:-50%;bottom:0;height:46vh;z-index:-1;pointer-events:none;
+  background:repeating-linear-gradient(90deg,rgba(255,46,196,.55) 0 2px,transparent 2px 60px),repeating-linear-gradient(180deg,rgba(0,229,255,.45) 0 2px,transparent 2px 46px);
+  transform:perspective(320px) rotateX(62deg);transform-origin:50% 100%;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 55%);mask-image:linear-gradient(180deg,transparent 0%,#000 55%)}
+:root[data-skin="gamer"] .monthnav h1{font-size:1.3rem;letter-spacing:.02em;text-shadow:0 0 14px rgba(0,229,255,.55)}
+:root[data-skin="gamer"] .brand{font-size:2.2rem;text-shadow:0 0 18px rgba(255,46,196,.7)}
+:root[data-skin="gamer"] .brandbar b{font-size:1rem;text-shadow:0 0 10px rgba(255,46,196,.6)}
+:root[data-skin="gamer"] .card,:root[data-skin="gamer"] .list{border-color:rgba(255,46,196,.45);box-shadow:0 0 18px rgba(0,229,255,.12)}
+:root[data-skin="gamer"] .sum{border-top:2px solid #FF2EC4;box-shadow:0 -6px 24px rgba(255,46,196,.25)}
+:root[data-skin="gamer"] .tabs button[aria-selected="true"]{box-shadow:0 0 0 1px #00E5FF,0 0 12px rgba(0,229,255,.35)}
+
+:root[data-skin] .top{margin:0 -10px;padding:8px 10px 10px;border-radius:0 0 18px 18px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+:root[data-skin] .note{text-shadow:0 1px 2px rgba(0,0,0,.35)}
+
+.sheet{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.45)}
+.sheet[hidden]{display:none}
+.sheetin{width:100%;max-width:560px;background:var(--surface);color:var(--ink);border-radius:22px 22px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom,0px))}
+.sheetin h2{margin:0 0 4px;font-size:1.1rem}
+.sheetin p{margin:0 0 14px;color:var(--muted);font-size:.9rem}
+.skins{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.skin{border:2px solid var(--line);border-radius:14px;padding:0;background:var(--surface);overflow:hidden;text-align:left}
+.skin[aria-checked="true"]{border-color:var(--btn);box-shadow:0 0 0 2px var(--btn)}
+.skin .pv{height:84px;display:flex;align-items:center;justify-content:center;position:relative}
+.skin .pv i{width:62%;height:30px;border-radius:8px;background:#fff;opacity:.95}
+.skin span{display:block;padding:8px 10px;font-weight:600;font-size:.92rem;color:var(--ink)}
+.pv.sencillo{background:#EDF0F4}.pv.sencillo i{border:1px solid #D5DCE4}
+.pv.deportivo{background:repeating-linear-gradient(180deg,#1C7444 0 14px,#196A3E 14px 28px)}
+.pv.deportivo::after{content:"";position:absolute;width:40px;height:40px;border:2px solid rgba(255,255,255,.5);border-radius:50%}
+.pv.deportivo i{position:relative;z-index:1}
+.pv.ejecutivo{background:repeating-linear-gradient(90deg,transparent 0 8px,rgba(241,223,180,.18) 8px 9px),#14213D}.pv.ejecutivo i{background:#FBF8F1;border:1px solid #D8C9A3}
+.pv.gamer{background:linear-gradient(180deg,#0B0718,#2A0F5E)}.pv.gamer i{background:#161029;border:1px solid #FF2EC4;box-shadow:0 0 10px rgba(0,229,255,.5)}
+.sheetin .ghost{width:100%;margin-top:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body class="locked">
+<div id="lock" class="lock" hidden><div class="lockin"><div class="brand">AlDía</div><p id="lockmsg" role="status" aria-live="polite"></p><div class="dots" id="dots" aria-hidden="true"></div><div class="pad" id="pad"></div></div></div>
+<div class="app">
+  <header class="top">
+    <div class="brandbar"><b>AlDía</b><div class="bb"><button id="skinbtn">Fondo</button><button id="lockbtn">Bloquear</button></div></div>
+    <div class="monthnav">
+      <button class="navbtn" id="prev" aria-label="Mes anterior">‹</button>
+      <h1 id="mtitle">…</h1>
+      <button class="navbtn" id="next" aria-label="Mes siguiente">›</button>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="gastos" aria-selected="true">Gastos</button>
+      <button role="tab" data-tab="ingresos" aria-selected="false">Ingresos</button>
+      <button role="tab" data-tab="historial" aria-selected="false">Historial</button>
+    </nav>
+  </header>
+  <main id="view"><div class="loading">Cargando tus datos…</div></main>
+  <p class="note" id="storenote"></p>
+  <button class="linkbtn" id="chpin">Cambiar código de entrada</button>
+</div>
+<footer class="sum" id="sum"></footer>
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheett"><div class="sheetin">
+  <h2 id="sheett">Elige tu fondo</h2><p>Se queda guardado hasta que lo cambies. Tus datos siempre se ven sobre tarjetas claras y legibles.</p>
+  <div class="skins" id="skins" role="radiogroup" aria-label="Fondo"></div>
+  <button class="ghost" id="sheetclose">Listo</button>
+</div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const DEFAULT_CATS=["Vivienda","Supermercado 1ª quincena","Supermercado 2ª quincena","Luz","Agua","Empleada 1ª quincena","Empleada 2ª quincena","Celular","Ahorro","Comida fuera"];
+const MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const pad=n=>String(n).padStart(2,"0");
+const todayISO=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())};
+const monthOf=iso=>iso.slice(0,7);
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const mName=m=>cap(MESES[+m.slice(5,7)-1])+" "+m.slice(0,4);
+const mShort=m=>MESES[+m.slice(5,7)-1];
+const dShort=iso=>+iso.slice(8,10)+" "+MESES[+iso.slice(5,7)-1].slice(0,3);
+const nf=new Intl.NumberFormat("es-419",{minimumFractionDigits:0,maximumFractionDigits:2});
+const fmt=n=>(n<0?"-$":"$")+nf.format(Math.abs(Math.round(n*100)/100));
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const shiftMonth=(m,k)=>{const d=new Date(+m.slice(0,4),+m.slice(5,7)-1+k,1);return d.getFullYear()+"-"+pad(d.getMonth()+1)};
+const daysIn=m=>new Date(+m.slice(0,4),+m.slice(5,7),0).getDate();
+const moveDate=(iso,m)=>m+"-"+pad(Math.min(+iso.slice(8,10),daysIn(m)));
+const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+/* ---------- Almacenamiento ---------- */
+const Store={mode:"local",db:null,uid:null,chains:{},
+  async init(){
+    this.mode="local";
+  },
+  ref(k){return this.db.collection("data/users/"+this.uid).doc(k)},
+  async get(k){
+    if(this.mode==="db"){
+      try{const s=await this.ref(k).get();return s.exists?JSON.parse(JSON.stringify(s.data())):null}catch(e){return null}
+    }
+    try{const v=localStorage.getItem("gm:"+k);return v?JSON.parse(v):null}catch(e){return null}
+  },
+  set(k,data){
+    const body=JSON.parse(JSON.stringify(data));
+    const run=async()=>{
+      if(this.mode==="db"){
+        try{await this.ref(k).set(body)}
+        catch(e){
+          if(e&&e.code==="unavailable"){await new Promise(r=>setTimeout(r,600+Math.random()*600));await this.ref(k).set(body)}
+          else throw e;
+        }
+      }else{try{localStorage.setItem("gm:"+k,JSON.stringify(body))}catch(e){}}
+    };
+    const p=(this.chains[k]||Promise.resolve()).then(run);
+    this.chains[k]=p.catch(()=>{});
+    p.catch(e=>toast(e&&e.code==="quota_exceeded"?"Se llenó el espacio de guardado":"No se pudo guardar. Intenta de nuevo."));
+    return p;
+  },
+  async listMonths(){
+    if(this.mode==="db"){
+      try{const q=await this.db.collection("data/users/"+this.uid).get();return q.docs.filter(d=>d.id.startsWith("m-")).map(d=>d.data())}catch(e){return[]}
+    }
+    const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith("gm:m-"))out.push(JSON.parse(localStorage.getItem(k)))}}catch(e){}
+    return out;
+  }
+};
+
+/* ---------- Estado ---------- */
+const months={};
+let cur=monthOf(todayISO()), tab="gastos", customCats=[];
+let gForm={cat:null,amt:"",date:null,note:"",editId:null};
+let iForm={desc:"",amt:"",type:"fijo",date:null};
+let openId=null, delArm=null;
+let mail={email:"",senders:"",autoCheck:true,connected:false,lastCheck:null,seen:[],pending:[]};
+let mailBusy=false, mailMsg=null;
+const saveMail=()=>Store.set("mail",mail);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+const blankMonth=m=>({month:m,expenses:[],incomes:[],paidTotal:0,plannedTotal:0,incomeTotal:0});
+async function ensure(m){
+  if(!months[m]){const d=await Store.get("m-"+m);months[m]=d?Object.assign(blankMonth(m),d):blankMonth(m)}
+  return months[m];
+}
+function totals(d){
+  const paid=d.expenses.filter(e=>e.paid).reduce((s,e)=>s+e.amount,0);
+  const planned=d.expenses.reduce((s,e)=>s+e.amount,0);
+  const inc=d.incomes.reduce((s,e)=>s+e.amount,0);
+  return {paid,planned,pend:planned-paid,inc};
+}
+function save(m){
+  const d=months[m];const t=totals(d);
+  d.paidTotal=t.paid;d.plannedTotal=t.planned;d.incomeTotal=t.inc;
+  return Store.set("m-"+m,d);
+}
+const allCats=()=>[...DEFAULT_CATS,...customCats];
+const defaultDate=()=>cur===monthOf(todayISO())?todayISO():cur+"-01";
+
+/* ---------- UI general ---------- */
+let tt;
+function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>el.classList.remove("show"),2200)}
+const view=document.getElementById("view");
+
+async function go(){
+  await ensure(cur);
+  document.getElementById("mtitle").textContent=mName(cur);
+  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===tab));
+  if(!gForm.editId) gForm.date=defaultDate();
+  if(!iForm.date||monthOf(iForm.date)!==cur) iForm.date=defaultDate();
+  if(tab==="gastos") renderGastos();
+  else if(tab==="ingresos") renderIngresos();
+  else if(tab==="historial") renderHistorial();
+  else renderCorreo();
+  renderFooter();updateBadge();
+}
+
+function renderFooter(){
+  const d=months[cur];if(!d)return;const t=totals(d);
+  const saldo=t.inc-t.paid;
+  const pct=t.inc>0?Math.min(100,Math.round(t.paid/t.inc*100)):(t.paid>0?100:0);
+  document.getElementById("sum").innerHTML=`<div class="in">
+    <div class="lab">${t.inc>0?`Te queda de tus ingresos de ${mShort(cur)}`:`Agrega tus ingresos de ${mShort(cur)} para ver cuánto te queda`}</div>
+    <div class="big num" style="${saldo<0?"color:#FF8E8E":""}">${fmt(saldo)}</div>
+    <div class="bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="Parte de los ingresos ya usada en pagos"><i style="width:${pct}%;${saldo<0?"background:#FF8E8E":""}"></i></div>
+    <div class="trio num">
+      <div>Ingresos<b>${fmt(t.inc)}</b></div>
+      <div>Total pagado<b>${fmt(t.paid)}</b></div>
+      <div>Por pagar<b>${fmt(t.pend)}</b></div>
+    </div></div>`;
+}
+
+/* ---------- Gastos ---------- */
+function renderGastos(){
+  view.innerHTML=`<div id="mailbanner"></div><section class="card" id="gform"></section><div id="copybox"></div><div id="glist"></div>`;
+  renderMailBanner();
+  renderGForm();renderGList();renderCopy();
+}
+function renderGForm(){
+  const f=gForm;const box=document.getElementById("gform");
+  box.innerHTML=`<h2>${f.editId?"Editar gasto":"Agregar gasto"}</h2>
+    <div class="chips" role="radiogroup" aria-label="Tipo de gasto">
+      ${allCats().map(c=>`<button type="button" class="chip${c===f.cat?" on":""}" role="radio" aria-checked="${c===f.cat}" data-cat="${esc(c)}">${esc(c)}</button>`).join("")}
+      <button type="button" class="chip add" id="newcat">+ Otra categoría</button>
+    </div>
+    <div class="inline" id="newcatbox" hidden><input type="text" id="newcatin" maxlength="40" placeholder="Ej. Gimnasio, Internet"><button id="newcatok">Añadir</button></div>
+    <div class="row2">
+      <label>Monto<input type="number" id="gamt" inputmode="decimal" step="0.01" min="0" placeholder="0" value="${esc(f.amt)}"></label>
+      <label>Fecha<input type="date" id="gdate" value="${esc(f.date)}"></label>
+    </div>
+    <label>Nota (opcional)<input type="text" id="gnote" maxlength="80" placeholder="Ej. factura de octubre" value="${esc(f.note)}"></label>
+    <div class="actions"><button class="primary" id="gsave">${f.editId?"Guardar cambios":"Agregar gasto"}</button>${f.editId?'<button class="ghost" id="gcancel">Cancelar</button>':""}</div>`;
+  box.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>{gForm.cat=b.dataset.cat;box.querySelectorAll("[data-cat]").forEach(x=>{const on=x===b;x.classList.toggle("on",on);x.setAttribute("aria-checked",on)})});
+  box.querySelector("#gamt").oninput=e=>gForm.amt=e.target.value;
+  box.querySelector("#gdate").oninput=e=>gForm.date=e.target.value;
+  box.querySelector("#gnote").oninput=e=>gForm.note=e.target.value;
+  box.querySelector("#newcat").onclick=()=>{const nb=box.querySelector("#newcatbox");nb.hidden=!nb.hidden;if(!nb.hidden)box.querySelector("#newcatin").focus()};
+  box.querySelector("#newcatok").onclick=addCat;
+  box.querySelector("#newcatin").onkeydown=e=>{if(e.key==="Enter")addCat()};
+  box.querySelector("#gsave").onclick=saveExpense;
+  const c=box.querySelector("#gcancel");if(c)c.onclick=()=>{gForm={cat:null,amt:"",date:defaultDate(),note:"",editId:null};renderGForm()};
+}
+async function addCat(){
+  const v=document.getElementById("newcatin").value.trim();if(!v)return;
+  if(!allCats().some(c=>c.toLowerCase()===v.toLowerCase())){customCats.push(v);saveSettings()}
+  gForm.cat=allCats().find(c=>c.toLowerCase()===v.toLowerCase());renderGForm();
+}
+async function saveExpense(){
+  const f=gForm;const amount=parseFloat(String(f.amt).replace(",","."));
+  if(!f.cat){toast("Elige el tipo de gasto");return}
+  if(!(amount>0)){toast("Escribe el monto");document.getElementById("gamt").focus();return}
+  const date=f.date&&/^\d{4}-\d{2}-\d{2}$/.test(f.date)?f.date:todayISO();
+  const m=monthOf(date);await ensure(m);
+  if(f.editId){
+    const src=months[cur];const i=src.expenses.findIndex(e=>e.id===f.editId);
+    if(i>-1){
+      const e=Object.assign({},src.expenses[i],{category:f.cat,amount,date,note:f.note.trim()});
+      if(m===cur){src.expenses[i]=e;save(cur)}
+      else{src.expenses.splice(i,1);months[m].expenses.push(e);save(cur);save(m)}
+    }
+    toast(m===cur?"Cambios guardados":"Movido a "+mName(m));
+  }else{
+    months[m].expenses.push({id:uid(),category:f.cat,amount,date,note:f.note.trim(),paid:false,paidOn:null});
+    save(m);
+    toast(m===cur?"Gasto agregado":"Agregado a "+mName(m));
+  }
+  gForm={cat:null,amt:"",date:defaultDate(),note:"",editId:null};openId=null;
+  renderGForm();renderGList();renderCopy();renderFooter();
+}
+function expenseRow(e){
+  const open=openId===e.id;
+  const sub=[e.note,e.paid&&e.paidOn?"Pagado el "+dShort(e.paidOn):dShort(e.date)].filter(Boolean).map(esc).join(", ");
+  return `<div class="item${e.paid?" paid":""}" data-id="${e.id}">
+    <div class="itemrow">
+      <button class="pay" data-pay="${e.id}" aria-pressed="${e.paid}" aria-label="${e.paid?"Pagado. Toca para desmarcar":"Marcar como pagado"}: ${esc(e.category)}">${CHECK}</button>
+      <button class="info" data-open="${e.id}" aria-expanded="${open}"><strong>${esc(e.category)}</strong><small>${sub}</small></button>
+      <span class="amt num">${fmt(e.amount)}</span>
+    </div>
+    ${open?`<div class="more"><button data-edit="${e.id}">Editar</button><button class="del${delArm===e.id?" sure":""}" data-del="${e.id}">${delArm===e.id?"Toca para eliminar":"Eliminar"}</button></div>`:""}
+  </div>`;
+}
+function renderGList(){
+  const d=months[cur];const box=document.getElementById("glist");
+  const pend=d.expenses.filter(e=>!e.paid).sort((a,b)=>a.date.localeCompare(b.date));
+  const paid=d.expenses.filter(e=>e.paid).sort((a,b)=>(b.paidOn||"").localeCompare(a.paidOn||""));
+  const t=totals(d);
+  if(!d.expenses.length){box.innerHTML=`<div class="listhead"><h3>Gastos de ${mShort(cur)}</h3></div><div class="list"><div class="empty">Todavía no hay gastos este mes. Elige una categoría arriba y agrega el primero.</div></div>`;return}
+  box.innerHTML=
+    (pend.length?`<div class="listhead"><h3>Por pagar</h3><span class="num">${fmt(t.pend)}</span></div><div class="list">${pend.map(expenseRow).join("")}</div>`:"")+
+    (paid.length?`<div class="listhead"><h3>Pagados</h3><span class="num">${fmt(t.paid)}</span></div><div class="list">${paid.map(expenseRow).join("")}</div>`:"");
+  box.querySelectorAll("[data-pay]").forEach(b=>b.onclick=()=>togglePaid(b.dataset.pay));
+  box.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{openId=openId===b.dataset.open?null:b.dataset.open;delArm=null;renderGList()});
+  box.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>startEdit(b.dataset.edit));
+  box.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>delExpense(b.dataset.del));
+}
+function togglePaid(id){
+  const e=months[cur].expenses.find(x=>x.id===id);if(!e)return;
+  e.paid=!e.paid;e.paidOn=e.paid?todayISO():null;
+  save(cur);renderGList();renderFooter();
+  const tt2=totals(months[cur]);
+  toast((e.paid?e.category+" pagado":e.category+" vuelve a por pagar")+". Te quedan "+fmt(tt2.inc-tt2.paid));
+}
+function startEdit(id){
+  const e=months[cur].expenses.find(x=>x.id===id);if(!e)return;
+  if(!allCats().includes(e.category))customCats.push(e.category);
+  gForm={cat:e.category,amt:String(e.amount),date:e.date,note:e.note||"",editId:id};
+  renderGForm();document.getElementById("gform").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function delExpense(id){
+  if(delArm!==id){delArm=id;renderGList();return}
+  const d=months[cur];d.expenses=d.expenses.filter(e=>e.id!==id);
+  delArm=null;openId=null;if(gForm.editId===id)gForm={cat:null,amt:"",date:defaultDate(),note:"",editId:null};
+  save(cur);renderGForm();renderGList();renderCopy();renderFooter();toast("Gasto eliminado");
+}
+async function renderCopy(){
+  const box=document.getElementById("copybox");if(!box)return;
+  const d=months[cur];if(d.expenses.length){box.innerHTML="";return}
+  const pm=shiftMonth(cur,-1);const p=await ensure(pm);
+  if(tab!=="gastos"||months[cur].expenses.length||!p.expenses.length){box.innerHTML="";return}
+  const fixed=p.incomes.filter(i=>i.type==="fijo").length;
+  box.innerHTML=`<section class="card copy"><p>¿Repetir la lista de ${mShort(pm)}? Se copian ${p.expenses.length} gastos como “por pagar”${fixed?` y ${fixed} ingreso${fixed>1?"s":""} fijo${fixed>1?"s":""}`:""}, con fechas de ${mShort(cur)}. Luego puedes ajustar los montos.</p><div class="actions"><button class="primary" id="docopy">Copiar lista de ${mShort(pm)}</button></div></section>`;
+  box.querySelector("#docopy").onclick=()=>{
+    const d=months[cur];
+    d.expenses=p.expenses.map(e=>({id:uid(),category:e.category,amount:e.amount,date:moveDate(e.date,cur),note:e.note||"",paid:false,paidOn:null}));
+    const have=new Set(d.incomes.map(i=>i.desc+"|"+i.amount));
+    p.incomes.filter(i=>i.type==="fijo"&&!have.has(i.desc+"|"+i.amount)).forEach(i=>d.incomes.push({id:uid(),desc:i.desc,amount:i.amount,type:"fijo",date:moveDate(i.date,cur)}));
+    save(cur);renderGList();renderCopy();renderFooter();toast("Lista copiada");
+  };
+}
+
+/* ---------- Ingresos ---------- */
+function renderIngresos(){
+  const f=iForm;
+  view.innerHTML=`<section class="card"><h2>Agregar ingreso</h2>
+    <label>Descripción<input type="text" id="idesc" maxlength="60" placeholder="Ej. Sueldo, bono, venta" value="${esc(f.desc)}"></label>
+    <label>Tipo</label>
+    <div class="seg" role="radiogroup" aria-label="Tipo de ingreso">
+      <button type="button" role="radio" data-type="fijo" class="${f.type==="fijo"?"on":""}" aria-checked="${f.type==="fijo"}">Fijo</button>
+      <button type="button" role="radio" data-type="eventual" class="${f.type==="eventual"?"on":""}" aria-checked="${f.type==="eventual"}">Eventual</button>
+    </div>
+    <div class="row2">
+      <label>Monto<input type="number" id="iamt" inputmode="decimal" step="0.01" min="0" placeholder="0" value="${esc(f.amt)}"></label>
+      <label>Fecha<input type="date" id="idate" value="${esc(f.date)}"></label>
+    </div>
+    <div class="actions"><button class="primary" id="isave">Agregar ingreso</button></div>
+  </section><div id="ilist"></div>`;
+  view.querySelector("#idesc").oninput=e=>iForm.desc=e.target.value;
+  view.querySelector("#iamt").oninput=e=>iForm.amt=e.target.value;
+  view.querySelector("#idate").oninput=e=>iForm.date=e.target.value;
+  view.querySelectorAll("[data-type]").forEach(b=>b.onclick=()=>{iForm.type=b.dataset.type;view.querySelectorAll("[data-type]").forEach(x=>{const on=x===b;x.classList.toggle("on",on);x.setAttribute("aria-checked",on)})});
+  view.querySelector("#isave").onclick=saveIncome;
+  renderIList();
+}
+async function saveIncome(){
+  const f=iForm;const amount=parseFloat(String(f.amt).replace(",","."));
+  if(!f.desc.trim()){toast("Escribe una descripción");document.getElementById("idesc").focus();return}
+  if(!(amount>0)){toast("Escribe el monto");document.getElementById("iamt").focus();return}
+  const date=f.date&&/^\d{4}-\d{2}-\d{2}$/.test(f.date)?f.date:todayISO();
+  const m=monthOf(date);await ensure(m);
+  months[m].incomes.push({id:uid(),desc:f.desc.trim(),amount,type:f.type,date});
+  save(m);toast(m===cur?"Ingreso agregado":"Agregado a "+mName(m));
+  iForm={desc:"",amt:"",type:f.type,date:defaultDate()};renderIngresos();renderFooter();
+}
+function renderIList(){
+  const d=months[cur];const box=document.getElementById("ilist");const t=totals(d);
+  if(!d.incomes.length){box.innerHTML=`<div class="listhead"><h3>Ingresos de ${mShort(cur)}</h3></div><div class="list"><div class="empty">Aún no registras ingresos para este mes.</div></div>`;return}
+  const rows=[...d.incomes].sort((a,b)=>a.date.localeCompare(b.date)).map(i=>`<div class="item" data-id="${i.id}">
+    <div class="itemrow" style="padding-left:16px">
+      <button class="info" data-open="${i.id}" aria-expanded="${openId===i.id}"><strong>${esc(i.desc)}<span class="badge${i.type==="eventual"?" ev":""}">${i.type==="fijo"?"Fijo":"Eventual"}</span></strong><small>${dShort(i.date)}</small></button>
+      <span class="amt num" style="color:var(--inc)">${fmt(i.amount)}</span>
+    </div>
+    ${openId===i.id?`<div class="more" style="padding-left:16px"><button class="del${delArm===i.id?" sure":""}" data-del="${i.id}">${delArm===i.id?"Toca para eliminar":"Eliminar"}</button></div>`:""}
+  </div>`).join("");
+  box.innerHTML=`<div class="listhead"><h3>Ingresos de ${mShort(cur)}</h3><span class="num">${fmt(t.inc)}</span></div><div class="list">${rows}</div>`;
+  box.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{openId=openId===b.dataset.open?null:b.dataset.open;delArm=null;renderIList()});
+  box.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{
+    const id=b.dataset.del;if(delArm!==id){delArm=id;renderIList();return}
+    d.incomes=d.incomes.filter(x=>x.id!==id);delArm=null;openId=null;save(cur);renderIList();renderFooter();toast("Ingreso eliminado");
+  });
+}
+
+/* ---------- Historial ---------- */
+async function renderHistorial(){
+  view.innerHTML=`<section class="card"><h2>Buscar un mes</h2>
+    <div class="inline"><input type="month" id="jump" value="${cur}" aria-label="Mes"><button id="jumpgo">Ver</button></div></section>
+    <section class="card"><h2>Respaldo</h2>
+      <p class="help">Tus datos viven solo en este teléfono. Guarda un respaldo de vez en cuando, o úsalo para pasar tus datos a otro teléfono.</p>
+      <div class="actions wrap"><button class="primary" id="bkexp" style="flex-basis:100%">Guardar respaldo</button><button class="ghost" id="bkimp">Cargar respaldo</button></div>
+      <input type="file" id="bkfile" accept="application/json,.json" hidden>
+    </section>
+    <div id="hlist"><div class="loading">Cargando historial…</div></div>`;
+  view.querySelector("#jumpgo").onclick=()=>{const v=view.querySelector("#jump").value;if(/^\d{4}-\d{2}$/.test(v)){cur=v;tab="gastos";openId=null;go()}};
+  view.querySelector("#bkexp").onclick=exportBackup;
+  let armed=false;
+  view.querySelector("#bkimp").onclick=e=>{
+    if(!armed){armed=true;e.target.textContent="Reemplaza tus datos actuales. Toca otra vez";e.target.style.color="var(--danger)";return}
+    view.querySelector("#bkfile").click();
+  };
+  view.querySelector("#bkfile").onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)importBackup(f)};
+  const stored=await Store.listMonths();
+  if(tab!=="historial")return;
+  const map={};stored.forEach(d=>{if(d&&d.month)map[d.month]=d});
+  Object.values(months).forEach(d=>map[d.month]=d);
+  const list=Object.values(map).filter(d=>(d.expenses||[]).length||(d.incomes||[]).length).map(d=>({m:d.month,...totals({expenses:d.expenses||[],incomes:d.incomes||[]}),n:(d.expenses||[]).length})).sort((a,b)=>b.m.localeCompare(a.m));
+  const box=document.getElementById("hlist");
+  if(!list.length){box.innerHTML=`<div class="list" style="margin-top:14px"><div class="empty">Cuando registres gastos aparecerán aquí, mes por mes.</div></div>`;return}
+  const year=cur.slice(0,4);const yr=list.filter(x=>x.m.startsWith(year));
+  const yPaid=yr.reduce((s,x)=>s+x.paid,0),yInc=yr.reduce((s,x)=>s+x.inc,0);
+  box.innerHTML=`<section class="card"><div class="yearsum"><span>Pagado en ${year}</span><b class="num">${fmt(yPaid)}</b></div><div class="yearsum" style="margin-top:4px;color:var(--muted);font-size:.9rem"><span>Ingresos en ${year}</span><span class="num">${fmt(yInc)}</span></div></section>
+    <div class="listhead"><h3>Mes por mes</h3><span>Toca un mes para verlo</span></div>
+    <div class="list">${list.map(x=>`<button class="hist" data-m="${x.m}">
+      <span class="m">${mName(x.m)}<small>${x.n} gasto${x.n===1?"":"s"}${x.pend>0?`, ${fmt(x.pend)} por pagar`:""}</small></span>
+      <span class="v num">${fmt(x.paid)}<small>Ingresos ${fmt(x.inc)}</small></span></button>`).join("")}</div>`;
+  box.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{cur=b.dataset.m;tab="gastos";openId=null;go();window.scrollTo(0,0)});
+}
+
+/* ---------- Correo ---------- */
+function updateBadge(){
+  const b=document.querySelector('.tabs [data-tab="correo"]');if(!b)return;
+  const n=mail.pending.length;
+  b.innerHTML="Correo"+(n?`<span class="cnt" aria-label="${n} por confirmar">${n}</span>`:"");
+}
+function renderMailBanner(){
+  const box=document.getElementById("mailbanner");if(!box)return;
+  const n=mail.pending.length;
+  if(!n){box.innerHTML="";return}
+  box.innerHTML=`<section class="card copy"><p>Encontré ${n} pago${n>1?"s":""} en tu correo por confirmar.</p><div class="actions"><button class="primary" id="gotomail">Revisar pagos del correo</button></div></section>`;
+  box.querySelector("#gotomail").onclick=()=>{tab="correo";go();window.scrollTo(0,0)};
+}
+function mcpErr(e){
+  const c=e&&e.code;
+  const map={
+    no_mcp:"Esta vista no puede conectarse al correo. Abre la app desde claude.ai o la app de Claude.",
+    no_sample:"La app necesita permiso para usar Claude y así leer los correos. Revisa los permisos de la app.",
+    needs_reauth:"La conexión con Gmail venció. Vuelve a conectarlo en Claude: Configuración, Conectores.",
+    server_not_connected:"Gmail no está conectado en tu cuenta de Claude. Agrégalo en Configuración, Conectores.",
+    selection_required:"Tienes más de una cuenta de Gmail conectada. Elige cuál usar en el aviso de Claude y vuelve a intentar.",
+    not_in_manifest:"No le diste permiso a la app para leer Gmail. Puedes activarlo en los permisos de la app.",
+    blocked_by_policy:"Tu organización no permite que esta app use Gmail.",
+    approval_required:"Claude necesita tu aprobación para leer el correo. Toca Revisar ahora y acepta el aviso.",
+    server_unavailable:"Gmail no respondió. Intenta de nuevo en unos minutos.",
+    not_granted:"La app no tiene permiso para usar Claude, que es quien lee los correos. Puedes activarlo en los permisos de la app.",
+    sampling_disabled:"Claude no está disponible para leer correos en esta cuenta.",
+    rate_limited:"Se hicieron muchas revisiones seguidas. Intenta más tarde.",
+    session_expired:"Tu sesión venció. Vuelve a iniciar sesión en Claude.",
+    prompt_too_large:"Hay demasiados correos para revisar de una vez. Escribe los correos de tu banco para filtrar mejor.",
+    invalid_json:"No se pudieron interpretar los correos. Intenta de nuevo.",
+    refused:"No se pudieron leer estos correos. Intenta con los correos de tu banco como filtro."
+  };
+  if(c==="tool_error") return {text:"Gmail devolvió un error: "+(e.message||"sin detalle")};
+  return {text:map[c]||"No se pudo revisar el correo. Intenta de nuevo.",perm:["not_in_manifest","not_granted","no_sample"].includes(c)};
+}
+function setMailMsg(m){mailMsg=m;const box=document.getElementById("mailmsg");if(box)paintMailMsg(box)}
+function paintMailMsg(box){
+  if(!mailMsg){box.innerHTML="";return}
+  box.innerHTML=`<div class="msg ${mailMsg.kind||""}" role="status">${esc(mailMsg.text)}${mailMsg.perm?'<button id="openperm">Abrir permisos de la app</button>':""}</div>`;
+  const b=box.querySelector("#openperm");
+  if(b)b.onclick=async()=>{try{const p=await window.claude.use("permissions");if(p)await p.manage()}catch(e){toast("Abre el menú Permisos de la app en Claude")}};
+}
+function renderCorreo(){
+  const m=mail;
+  view.innerHTML=`<section class="card"><h2>${m.connected?"Correo conectado":"Conectar tu correo"}</h2>
+    <p class="help">La app usa la cuenta de Gmail conectada en Claude para buscar correos de pagos bancarios. Solo los lee: no envía, borra ni cambia nada en tu correo.</p>
+    <label>Tu correo de Gmail<input type="text" id="memail" inputmode="email" autocomplete="email" placeholder="tucorreo@gmail.com"></label>
+    <label>Correos de tu banco (opcional)<input type="text" id="msenders" placeholder="alertas@tubanco.com, pagos@otrobanco.com"></label>
+    <p class="help small">Si los escribes, solo se revisan correos de esos remitentes. Si lo dejas vacío, se buscan correos con palabras como pago, comprobante o transferencia.</p>
+    <label class="check"><input type="checkbox" id="mauto"> Revisar el correo cada vez que abro la app</label>
+    ${m.connected?`<div class="status"><i></i>${m.lastCheck?"Última revisión: "+new Date(m.lastCheck).toLocaleString("es-419",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"Aún no se ha revisado"}</div>
+      <div class="actions wrap"><button class="primary" id="mcheck" style="flex-basis:100%">${mailBusy?"Revisando…":"Revisar ahora"}</button><button class="ghost" id="msave">Guardar cambios</button><button class="ghost" id="moff">Desconectar</button></div>`
+    :`<div class="warn">Al conectar, la app podrá leer correos de tu cuenta de Gmail, incluida información financiera como montos y datos bancarios. Verifica que la cuenta es tuya y que cuentas con los permisos; el uso de esta información es tu responsabilidad. Claude te pedirá permiso la primera vez.</div>
+      <div class="actions"><button class="primary" id="mconnect">${mailBusy?"Conectando…":"Acepto, conectar y revisar"}</button></div>`}
+  </section><div id="mailmsg"></div><div id="proposals"></div>`;
+  const q=id=>view.querySelector(id);
+  q("#memail").value=m.email;q("#msenders").value=m.senders;q("#mauto").checked=m.autoCheck;
+  const read=()=>{mail.email=q("#memail").value.trim();mail.senders=q("#msenders").value.trim();mail.autoCheck=q("#mauto").checked};
+  if(q("#mconnect"))q("#mconnect").onclick=()=>{read();mail.connected=true;mail.consentAt=new Date().toISOString();saveMail();renderCorreo();checkMail(false)};
+  if(q("#mcheck"))q("#mcheck").onclick=()=>{read();saveMail();checkMail(false)};
+  if(q("#msave"))q("#msave").onclick=()=>{read();saveMail();toast("Cambios guardados")};
+  if(q("#moff"))q("#moff").onclick=()=>{
+    mail.connected=false;mail.pending=[];mail.lastCheck=null;saveMail();
+    mailMsg={text:"La app ya no revisará tu correo. Para quitarle también el permiso de Gmail, ábrelo en los permisos de la app.",perm:true};
+    renderCorreo();updateBadge();
+  };
+  paintMailMsg(q("#mailmsg"));
+  renderProposals();
+}
+function matchFor(p){
+  const d=months[p.mes];if(!d||!p.categoria)return null;
+  const c=d.expenses.filter(e=>!e.paid&&e.category===p.categoria);
+  if(!c.length)return null;
+  return c.sort((a,b)=>Math.abs(a.amount-p.monto)-Math.abs(b.amount-p.monto))[0];
+}
+async function renderProposals(){
+  const box=document.getElementById("proposals");if(!box)return;
+  if(!mail.pending.length){box.innerHTML=mail.connected&&mail.lastCheck?`<div class="list" style="margin-top:14px"><div class="empty">No hay pagos del correo por confirmar.</div></div>`:"";return}
+  for(const p of mail.pending) await ensure(p.mes);
+  if(tab!=="correo")return;
+  box.innerHTML=`<div class="listhead"><h3>Pagos encontrados</h3><span>Confirma cada uno</span></div><div class="list">${mail.pending.map(p=>{
+    const mt=matchFor(p);
+    const cats=allCats().includes(p.categoria)||!p.categoria?allCats():[...allCats(),p.categoria];
+    const what=!p.categoria?"Elige a qué gasto corresponde.":mt?`Se marcará como pagado “${esc(mt.category)}” de ${mName(p.mes)}${Math.abs(mt.amount-p.monto)>0.004?`, y su monto cambiará de ${fmt(mt.amount)} a ${fmt(p.monto)}`:""}.`:`No hay “${esc(p.categoria)}” por pagar en ${mName(p.mes)}. Se agregará como gasto nuevo ya pagado.`;
+    return `<div class="prop">
+      <div class="ptop"><strong>${esc(p.concepto)}</strong><span class="amt num">${fmt(p.monto)}</span></div>
+      <small>Pagado el ${dShort(p.fecha)}, corresponde a ${mName(p.mes)}</small>
+      <label>Gasto<select data-pcat="${p.pid}"><option value="">Elige el tipo de gasto</option>${cats.map(c=>`<option${c===p.categoria?" selected":""}>${esc(c)}</option>`).join("")}</select></label>
+      <p class="match">${what}</p>
+      <div class="actions"><button class="primary" data-pok="${p.pid}">Confirmar pago</button><button class="ghost" data-pskip="${p.pid}">Ignorar</button></div>
+    </div>`}).join("")}</div>`;
+  box.querySelectorAll("[data-pcat]").forEach(s=>s.onchange=()=>{const p=mail.pending.find(x=>x.pid===s.dataset.pcat);if(p){p.categoria=s.value||null;saveMail();renderProposals()}});
+  box.querySelectorAll("[data-pok]").forEach(b=>b.onclick=()=>confirmProposal(b.dataset.pok));
+  box.querySelectorAll("[data-pskip]").forEach(b=>b.onclick=()=>{mail.pending=mail.pending.filter(x=>x.pid!==b.dataset.pskip);saveMail();renderProposals();updateBadge()});
+}
+async function confirmProposal(pid){
+  const p=mail.pending.find(x=>x.pid===pid);if(!p)return;
+  if(!p.categoria){toast("Elige a qué gasto corresponde");return}
+  const d=await ensure(p.mes);const mt=matchFor(p);
+  if(mt){mt.paid=true;mt.paidOn=p.fecha;mt.amount=p.monto;if(!mt.note)mt.note=p.concepto;mt.source="correo"}
+  else d.expenses.push({id:uid(),category:p.categoria,amount:p.monto,date:p.fecha.slice(0,7)===p.mes?p.fecha:p.mes+"-01",note:p.concepto,paid:true,paidOn:p.fecha,source:"correo"});
+  save(p.mes);
+  mail.pending=mail.pending.filter(x=>x.pid!==pid);saveMail();
+  const t=totals(months[cur]);
+  toast(p.mes===cur?"Pago confirmado. Te quedan "+fmt(t.inc-t.paid):"Pago confirmado en "+mName(p.mes));
+  renderProposals();renderFooter();updateBadge();
+}
+async function checkMail(quiet){
+  if(mailBusy)return;mailBusy=true;
+  if(tab==="correo")renderCorreo();
+  setMailMsg({text:"Buscando correos de pagos…"});
+  try{
+    const mcp=await window.claude.use("mcp");if(!mcp)throw{code:"no_mcp"};
+    const sample=await window.claude.use("sample");if(!sample)throw{code:"no_sample"};
+    const since=new Date(mail.lastCheck?Date.parse(mail.lastCheck)-3*864e5:Date.now()-45*864e5);
+    const after=since.getFullYear()+"/"+pad(since.getMonth()+1)+"/"+pad(since.getDate());
+    const senders=mail.senders.split(/[,;\s]+/).map(x=>x.trim()).filter(x=>x.includes("@")||x.includes("."));
+    const base=senders.length?`from:(${senders.join(" OR ")})`:`(pago OR pagado OR comprobante OR transferencia OR factura OR recibo OR débito OR cargo)`;
+    const input={query:`${base} after:${after} -in:sent`,pageSize:30,view:"THREAD_VIEW_MINIMAL"};
+    let res;
+    try{res=await mcp.callTool("Gmail","search_threads",input)}
+    catch(e){if(e&&e.retryable){await sleep(e.retryAfterMs||1000+Math.random()*1000);res=await mcp.callTool("Gmail","search_threads",input)}else throw e}
+    const payload=res&&(res.payload!==undefined?res.payload:res.content);
+    let raw=JSON.stringify(payload??{});
+    if(!payload||raw==="{}"||raw==="[]"){
+      mail.lastCheck=new Date().toISOString();saveMail();
+      setMailMsg(quiet?null:{kind:"ok",text:"No hay correos nuevos de pagos."});return;
+    }
+    if(raw.length>120000)raw=raw.slice(0,120000);
+    const lim=await sample.limits().catch(()=>null);
+    const tools=lim&&lim.tools?[{name:"leer_correo",description:"Devuelve el texto completo de un correo a partir de su id de mensaje. Úsalo solo cuando el resumen no muestra el monto, la fecha o el mes al que corresponde el pago.",
+      inputSchema:{type:"object",properties:{messageId:{type:"string",description:"id del mensaje"}},required:["messageId"]},
+      async execute(inp){const r=await mcp.callTool("Gmail","get_message",{messageId:String(inp.messageId),messageFormat:"PLAIN_TEXT"});return{texto:JSON.stringify(r.payload??r.content).slice(0,12000)}}}]:undefined;
+    const ignore=[...mail.seen,...mail.pending.map(p=>p.threadId)].slice(-300);
+    const prompt=`Lees correos bancarios para una app de gastos personales. Abajo está el resultado (JSON) de una búsqueda en Gmail.
+Identifica SOLO los correos que confirman un pago ya realizado por la persona: pago de un servicio o factura, transferencia enviada, débito automático o pago con tarjeta. Ignora promociones, recordatorios de pago, cobros pendientes, estados de cuenta sin un pago concreto y dinero recibido.
+No incluyas hilos con estos ids, ya revisados: ${JSON.stringify(ignore)}.
+${tools?"Si el resumen de un correo no trae el monto o el mes, usa la herramienta leer_correo con el id del mensaje.\n":""}Para cada pago devuelve un objeto con:
+- threadId: el id del hilo
+- fecha: fecha del pago, YYYY-MM-DD
+- mes: mes que indica el reporte o la factura, YYYY-MM (si no lo indica, el mes de la fecha del pago)
+- monto: número sin símbolos ni separadores de miles
+- concepto: texto corto en español, por ejemplo "Pago de luz"
+- categoria: exactamente una de ${JSON.stringify(allCats())}, o null si ninguna aplica
+Responde solo con un arreglo JSON; [] si no hay pagos.
+
+Resultado de la búsqueda:
+${raw}`;
+    const found=await sample.json(prompt,tools?{tools}:{});
+    const arr=Array.isArray(found)?found:[];
+    const known=new Set([...mail.seen,...mail.pending.map(p=>p.threadId)]);
+    let added=0;
+    for(const f of arr){
+      if(!f||!f.threadId||known.has(String(f.threadId)))continue;
+      const monto=typeof f.monto==="number"?f.monto:parseFloat(String(f.monto).replace(/[^\d.,-]/g,"").replace(",","."));
+      const fecha=/^\d{4}-\d{2}-\d{2}$/.test(f.fecha)?f.fecha:todayISO();
+      const mes=/^\d{4}-\d{2}$/.test(f.mes)?f.mes:fecha.slice(0,7);
+      if(!(monto>0))continue;
+      mail.pending.push({pid:uid(),threadId:String(f.threadId),fecha,mes,monto,concepto:String(f.concepto||"Pago").slice(0,80),categoria:allCats().includes(f.categoria)?f.categoria:null});
+      mail.seen.push(String(f.threadId));known.add(String(f.threadId));added++;
+    }
+    mail.seen=mail.seen.slice(-400);
+    mail.lastCheck=new Date().toISOString();mail.connected=true;saveMail();
+    setMailMsg(added?{kind:"ok",text:`Encontré ${added} pago${added>1?"s":""} nuevo${added>1?"s":""}. Confírmalos abajo.`}:(quiet?null:{kind:"ok",text:"No hay pagos nuevos en tu correo."}));
+    if(quiet&&added)toast(`${added} pago${added>1?"s":""} nuevo${added>1?"s":""} en tu correo`);
+  }catch(e){
+    const m=mcpErr(e);setMailMsg({kind:"err",...m});
+    if(quiet&&tab!=="correo")toast("No se pudo revisar el correo. Mira la pestaña Correo.");
+  }finally{
+    mailBusy=false;updateBadge();
+    if(tab==="correo")renderCorreo();else if(tab==="gastos")renderMailBanner();
+  }
+}
+
+/* ---------- Respaldo ---------- */
+function collectAll(){
+  const out={app:"AlDia",version:1,fecha:new Date().toISOString(),datos:{}};
+  try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith("gm:")&&k!=="gm:lock")out.datos[k.slice(3)]=JSON.parse(localStorage.getItem(k))}}catch(e){}
+  return out;
+}
+async function exportBackup(){
+  const data=JSON.stringify(collectAll(),null,1);
+  const name="AlDia-respaldo-"+todayISO()+".json";
+  const blob=new Blob([data],{type:"application/json"});
+  try{
+    const file=new File([blob],name,{type:"application/json"});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"Respaldo AlDía"});return}
+  }catch(e){if(e&&e.name==="AbortError")return}
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);
+  toast("Respaldo guardado");
+}
+async function importBackup(f){
+  try{
+    const j=JSON.parse(await f.text());
+    if(!j||j.app!=="AlDia"||typeof j.datos!=="object")throw 0;
+    const keys=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith("gm:")&&k!=="gm:lock")keys.push(k)}
+    keys.forEach(k=>localStorage.removeItem(k));
+    Object.entries(j.datos).forEach(([k,v])=>{if(k!=="lock")localStorage.setItem("gm:"+k,JSON.stringify(v))});
+    for(const k in months)delete months[k];
+    const st=j.datos.settings;if(st){customCats=Array.isArray(st.customCats)?st.customCats:[];if(st.skin)applySkin(st.skin)}
+    toast("Respaldo cargado");tab="gastos";go();
+  }catch(e){toast("Ese archivo no es un respaldo de AlDía")}
+}
+
+/* ---------- Navegación ---------- */
+document.getElementById("prev").onclick=()=>{cur=shiftMonth(cur,-1);openId=null;delArm=null;if(gForm.editId)gForm.editId=null;go()};
+document.getElementById("next").onclick=()=>{cur=shiftMonth(cur,1);openId=null;delArm=null;if(gForm.editId)gForm.editId=null;go()};
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.tab;openId=null;delArm=null;go()});
+
+/* ---------- Fondos ---------- */
+const SKINS=[["sencillo","Sencillo"],["deportivo","Deportivo"],["ejecutivo","Ejecutivo"],["gamer","Gamer"]];
+let skin="sencillo";
+function saveSettings(){return Store.set("settings",{customCats,skin})}
+function applySkin(k){
+  skin=SKINS.some(x=>x[0]===k)?k:"sencillo";
+  if(skin==="sencillo")document.documentElement.removeAttribute("data-skin");
+  else document.documentElement.setAttribute("data-skin",skin);
+  try{localStorage.setItem("isalie-skin",skin)}catch(e){}
+}
+function paintSkins(){
+  const box=document.getElementById("skins");
+  box.innerHTML=SKINS.map(([k,n])=>`<button class="skin" role="radio" aria-checked="${k===skin}" data-skin="${k}"><div class="pv ${k}"><i></i></div><span>${n}</span></button>`).join("");
+  box.querySelectorAll("[data-skin]").forEach(b=>b.onclick=()=>{applySkin(b.dataset.skin);paintSkins();saveSettings()});
+}
+document.getElementById("skinbtn").onclick=()=>{paintSkins();document.getElementById("sheet").hidden=false};
+document.getElementById("sheetclose").onclick=()=>{document.getElementById("sheet").hidden=true;toast("Fondo guardado")};
+document.getElementById("sheet").onclick=e=>{if(e.target.id==="sheet")document.getElementById("sheet").hidden=true};
+try{applySkin(localStorage.getItem("isalie-skin")||"sencillo")}catch(e){}
+
+/* ---------- Código de entrada ---------- */
+let lockDoc=null,lockMode="enter",entry="",firstPin="",fails=0,waitUntil=0,booted=false,hiddenAt=0;
+async function hashPin(pin,salt){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(salt+":"+pin));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+const LOCKTXT={enter:"Escribe tu código de entrada",setup1:"Crea un código de 4 a 6 números",setup2:"Escríbelo otra vez para confirmar",change0:"Escribe tu código actual"};
+function lockMsg(t,err){const el=document.getElementById("lockmsg");el.textContent=t;el.classList.toggle("err",!!err)}
+function paintPad(){
+  const max=6,n=entry.length;
+  document.getElementById("dots").innerHTML=Array.from({length:Math.max(4,n)},(_,i)=>`<i class="${i<n?"f":""}"></i>`).join("");
+  const wait=Date.now()<waitUntil;
+  const keys=["1","2","3","4","5","6","7","8","9","del","0","ok"];
+  const pad=document.getElementById("pad");
+  pad.innerHTML=keys.map(k=>k==="del"?`<button class="txt" data-k="del" aria-label="Borrar" ${wait?"disabled":""}>Borrar</button>`:k==="ok"?`<button class="ok" data-k="ok" aria-label="Aceptar" ${wait||n<4?"disabled":""}>OK</button>`:`<button data-k="${k}" ${wait||n>=max?"disabled":""}>${k}</button>`).join("")+(lockMode==="change0"||lockMode==="setup1"&&lockDoc?`<button class="txt" data-k="cancel" style="grid-column:1/-1;width:auto;height:auto;aspect-ratio:auto;padding:8px">Cancelar</button>`:"");
+  pad.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>key(b.dataset.k));
+}
+function showLock(mode,msg,err){
+  lockMode=mode;entry="";
+  document.body.classList.add("locked");document.getElementById("lock").hidden=false;
+  lockMsg(msg||LOCKTXT[mode],err);paintPad();
+}
+function unlock(){
+  document.getElementById("lock").hidden=true;document.body.classList.remove("locked");entry="";
+  if(!booted){booted=true;boot()}
+}
+async function key(k){
+  if(Date.now()<waitUntil)return;
+  if(k==="cancel"){unlock();return}
+  if(k==="del"){entry=entry.slice(0,-1);paintPad();return}
+  if(k!=="ok"){if(entry.length<6){entry+=k;paintPad()}return}
+  if(entry.length<4)return;
+  const pin=entry;entry="";
+  if(lockMode==="setup1"){firstPin=pin;lockMode="setup2";lockMsg(LOCKTXT.setup2);paintPad();return}
+  if(lockMode==="setup2"){
+    if(pin!==firstPin){firstPin="";showLock("setup1","Los códigos no coinciden. Crea uno nuevo",true);return}
+    const salt=crypto.getRandomValues(new Uint32Array(4)).join("-");
+    const nd={salt,hash:await hashPin(pin,salt)};
+    try{await Store.set("lock",nd);lockDoc=nd;firstPin="";toast("Código guardado");unlock()}
+    catch(e){showLock("setup1","No se pudo guardar el código. Intenta de nuevo",true)}
+    return;
+  }
+  const okPin=lockDoc&&(await hashPin(pin,lockDoc.salt))===lockDoc.hash;
+  if(okPin){fails=0;if(lockMode==="change0"){showLock("setup1")}else unlock();return}
+  fails++;
+  if(fails>=5){fails=0;waitUntil=Date.now()+30000;lockMsg("Demasiados intentos. Espera 30 segundos",true);paintPad();setTimeout(()=>{lockMsg(LOCKTXT[lockMode]);paintPad()},30000);return}
+  lockMsg("Código incorrecto",true);paintPad();
+}
+document.addEventListener("keydown",e=>{
+  if(document.getElementById("lock").hidden)return;
+  if(/^\d$/.test(e.key))key(e.key);else if(e.key==="Backspace")key("del");else if(e.key==="Enter")key("ok");
+});
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden)hiddenAt=Date.now();
+  else if(lockDoc&&booted&&hiddenAt&&Date.now()-hiddenAt>120000&&document.getElementById("lock").hidden)showLock("enter");
+});
+document.getElementById("lockbtn").onclick=()=>showLock("enter");
+document.getElementById("chpin").onclick=()=>showLock("change0");
+
+async function boot(){
+  const s=await Store.get("settings");if(s&&Array.isArray(s.customCats))customCats=s.customCats;
+  const ml=await Store.get("mail");if(ml)mail=Object.assign(mail,ml);
+  await go();
+}
+(async()=>{
+  document.getElementById("lock").hidden=false;lockMsg("Cargando…");
+  await Store.init();
+  document.getElementById("storenote").textContent="Tus datos se guardan solo en este teléfono. Haz respaldos en Historial.";
+  const st=await Store.get("settings");
+  if(st){if(Array.isArray(st.customCats))customCats=st.customCats;if(st.skin)applySkin(st.skin)}
+  lockDoc=await Store.get("lock");
+  showLock(lockDoc&&lockDoc.hash?"enter":"setup1");
+})();
+if("serviceWorker" in navigator&&location.protocol==="https:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}
+</script>
+</body>
+</html>
