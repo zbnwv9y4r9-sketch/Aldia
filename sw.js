@@ -1,5 +1,5 @@
 // Cambia este número cada vez que subas una versión nueva de la app
-const VERSION = "aldia-v1";
+const VERSION = "aldia-v2";
 const ARCHIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 
 self.addEventListener("install", e => {

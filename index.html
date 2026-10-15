@@ -88,6 +88,10 @@ input[type=text],input[type=number],input[type=date],input[type=month]{display:b
 .amt{font-weight:700;font-size:1.02rem;white-space:nowrap}
 .item.paid .amt{color:var(--paid)}
 .item.paid .info strong{color:var(--muted)}
+.trash{flex:none;width:38px;height:38px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--muted);display:grid;place-items:center;padding:0}
+.trash svg{width:19px;height:19px}
+.trash:hover{color:var(--danger);border-color:var(--line)}
+.trash.sure{width:auto;padding:0 10px;background:var(--danger);border-color:var(--danger);color:#fff;font-weight:700;font-size:.85rem}
 .more{display:flex;gap:8px;padding:0 14px 12px 66px}
 .more button{border:1px solid var(--line);background:transparent;border-radius:9px;padding:7px 12px;font-size:.9rem;font-weight:600}
 .more .del{color:var(--danger)}
@@ -272,7 +276,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none}
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
-const DEFAULT_CATS=["Vivienda","Supermercado 1ª quincena","Supermercado 2ª quincena","Luz","Agua","Empleada 1ª quincena","Empleada 2ª quincena","Celular","Ahorro","Comida fuera"];
+const DEFAULT_CATS=["Agua","Luz","Teléfono"];
 const MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 const pad=n=>String(n).padStart(2,"0");
 const todayISO=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())};
@@ -288,6 +292,7 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const shiftMonth=(m,k)=>{const d=new Date(+m.slice(0,4),+m.slice(5,7)-1+k,1);return d.getFullYear()+"-"+pad(d.getMonth()+1)};
 const daysIn=m=>new Date(+m.slice(0,4),+m.slice(5,7),0).getDate();
 const moveDate=(iso,m)=>m+"-"+pad(Math.min(+iso.slice(8,10),daysIn(m)));
+const TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
 const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 
 /* ---------- Almacenamiento ---------- */
@@ -455,8 +460,9 @@ function expenseRow(e){
       <button class="pay" data-pay="${e.id}" aria-pressed="${e.paid}" aria-label="${e.paid?"Pagado. Toca para desmarcar":"Marcar como pagado"}: ${esc(e.category)}">${CHECK}</button>
       <button class="info" data-open="${e.id}" aria-expanded="${open}"><strong>${esc(e.category)}</strong><small>${sub}</small></button>
       <span class="amt num">${fmt(e.amount)}</span>
+      <button class="trash${delArm===e.id?" sure":""}" data-del="${e.id}" aria-label="Eliminar ${esc(e.category)}">${delArm===e.id?"¿Eliminar?":TRASH}</button>
     </div>
-    ${open?`<div class="more"><button data-edit="${e.id}">Editar</button><button class="del${delArm===e.id?" sure":""}" data-del="${e.id}">${delArm===e.id?"Toca para eliminar":"Eliminar"}</button></div>`:""}
+    ${open?`<div class="more"><button data-edit="${e.id}">Editar</button></div>`:""}
   </div>`;
 }
 function renderGList(){
@@ -486,8 +492,9 @@ function startEdit(id){
   gForm={cat:e.category,amt:String(e.amount),date:e.date,note:e.note||"",editId:id};
   renderGForm();document.getElementById("gform").scrollIntoView({behavior:"smooth",block:"start"});
 }
+let disarmT;
 function delExpense(id){
-  if(delArm!==id){delArm=id;renderGList();return}
+  if(delArm!==id){delArm=id;renderGList();clearTimeout(disarmT);disarmT=setTimeout(()=>{if(delArm===id){delArm=null;if(tab==="gastos")renderGList()}},4000);return}
   const d=months[cur];d.expenses=d.expenses.filter(e=>e.id!==id);
   delArm=null;openId=null;if(gForm.editId===id)gForm={cat:null,amt:"",date:defaultDate(),note:"",editId:null};
   save(cur);renderGForm();renderGList();renderCopy();renderFooter();toast("Gasto eliminado");
@@ -548,8 +555,8 @@ function renderIList(){
     <div class="itemrow" style="padding-left:16px">
       <button class="info" data-open="${i.id}" aria-expanded="${openId===i.id}"><strong>${esc(i.desc)}<span class="badge${i.type==="eventual"?" ev":""}">${i.type==="fijo"?"Fijo":"Eventual"}</span></strong><small>${dShort(i.date)}</small></button>
       <span class="amt num" style="color:var(--inc)">${fmt(i.amount)}</span>
+      <button class="trash${delArm===i.id?" sure":""}" data-del="${i.id}" aria-label="Eliminar ${esc(i.desc)}">${delArm===i.id?"¿Eliminar?":TRASH}</button>
     </div>
-    ${openId===i.id?`<div class="more" style="padding-left:16px"><button class="del${delArm===i.id?" sure":""}" data-del="${i.id}">${delArm===i.id?"Toca para eliminar":"Eliminar"}</button></div>`:""}
   </div>`).join("");
   box.innerHTML=`<div class="listhead"><h3>Ingresos de ${mShort(cur)}</h3><span class="num">${fmt(t.inc)}</span></div><div class="list">${rows}</div>`;
   box.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{openId=openId===b.dataset.open?null:b.dataset.open;delArm=null;renderIList()});
